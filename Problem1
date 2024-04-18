@@ -1,0 +1,25 @@
+# Define the path to the vocabulary file and the output file
+vocab_file_path = '/Users/vaji/Documents/01 VU-Uni/05/NLP/Assign2/A2_2024-1/brown_vocab_100.txt'
+output_file_path = '/Users/vaji/Documents/01 VU-Uni/05/NLP/Assign2/A2_2024-1/word_to_index_100.txt'
+
+# Ensure the output file is empty by opening it in write mode and closing it
+with open(output_file_path, 'w') as file:
+    pass
+
+# Step 1: Read the file and create the dictionary
+word_to_index = {}
+with open(vocab_file_path, 'r') as file:
+    for index, line in enumerate(file):
+        word = line.strip()
+        word_to_index[word] = index
+
+# Step 2: Write the dictionary to the output file
+with open(output_file_path, 'w') as file:
+    for word, index in word_to_index.items():
+        file.write(f"{word}: {index}\n")
+
+# Step 3: Optionally read back and print the first few lines of the output file to verify
+print("Verifying output file content:")
+with open(output_file_path, 'r') as file:
+    for _ in range(5):
+        print(file.readline().strip())
