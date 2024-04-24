@@ -1,0 +1,68 @@
+import matplotlib.pyplot as plt
+import nltk
+from nltk.corpus import brown
+from nltk.probability import FreqDist
+from collections import Counter
+from nltk import pos_tag, word_tokenize
+
+# Ensure that the Brown corpus is available in NLTK
+nltk.download('brown')
+nltk.download('punkt')
+nltk.download('averaged_perceptron_tagger')
+
+# Import the Brown corpus
+brown_words = brown.words()
+
+# Compute a frequency distribution for all the words in the corpus
+fdist = FreqDist(brown_words)
+
+# Sort words by frequency
+common_words = fdist.most_common()
+
+# Extract tokens, types, words, average words per sentence, average word length
+tokens = len(brown_words)
+types = len(fdist)
+words = sum(fdist.values())
+sents = len(brown.sents())
+average_words_per_sentence = words / sents
+average_word_length = sum(len(word) for word in brown_words) / words
+
+# POS tagging and find the 10 most common tags
+pos_tags = [tag for (word, tag) in pos_tag(brown_words)]
+pos_freq = FreqDist(pos_tags)
+common_pos_tags = pos_freq.most_common(10)
+
+# Frequency list for plotting
+freq_list = [freq for (word, freq) in common_words]
+
+# Generate plots
+plt.figure(figsize=(12, 8))
+
+# Linear plot
+plt.subplot(1, 2, 1)
+plt.plot(freq_list)
+plt.title('Frequency Distribution (Linear)')
+plt.xlabel('Word Rank')
+plt.ylabel('Frequency')
+
+# Log-log plot
+plt.subplot(1, 2, 2)
+plt.loglog(freq_list)
+plt.title('Frequency Distribution (Log-Log)')
+plt.xlabel('Word Rank')
+plt.ylabel('Frequency')
+
+plt.tight_layout()
+plt.show()
+
+# Return values needed for the written part of the assignment
+info = {
+    'number_of_tokens': tokens,
+    'number_of_types': types,
+    'number_of_words': words,
+    'average_words_per_sentence': average_words_per_sentence,
+    'average_word_length': average_word_length,
+    'ten_most_frequent_POS_tags': common_pos_tags
+}
+
+info
