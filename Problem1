@@ -1,25 +1,26 @@
-# Define the path to the vocabulary file and the output file
-vocab_file_path = '/Users/vaji/Documents/01 VU-Uni/05/NLP/Assign2/A2_2024-1/brown_vocab_100.txt'
-output_file_path = '/Users/vaji/Documents/01 VU-Uni/05/NLP/Assign2/A2_2024-1/word_to_index_100.txt'
 
-# Ensure the output file is empty by opening it in write mode and closing it
-with open(output_file_path, 'w') as file:
-    pass
+# Initialize an empty dictionary to store word to index mapping
+word_index_dict = {}
 
-# Step 1: Read the file and create the dictionary
-word_to_index = {}
-with open(vocab_file_path, 'r') as file:
+# Read the brown_vocab_100.txt and populate the word_index_dict with word and its index
+vocab_file_path = '/Users/vaji/Documents/01 VU-Uni/P5/NLP/Assign2/A2_2024-2/brown_vocab_100.txt'
+with open(vocab_file_path, 'r', encoding='utf-8') as file:
     for index, line in enumerate(file):
-        word = line.strip()
-        word_to_index[word] = index
+        word = line.strip()  # Remove any trailing whitespace or newline characters
+        word_index_dict[word] = index  # Map the word to its line number (index)
 
-# Step 2: Write the dictionary to the output file
-with open(output_file_path, 'w') as file:
-    for word, index in word_to_index.items():
-        file.write(f"{word}: {index}\n")
+# Write the word_index_dict to a file named word_to_index_100.txt
+output_file_path = '/Users/vaji/Documents/01 VU-Uni/P5/NLP/Assign2/A2_2024-2/word_to_index_100.txt'
+with open(output_file_path, 'w', encoding='utf-8') as file:
+    for word, index in word_index_dict.items():
+        file.write(f"{word}: {index}\n")  # Format each entry as 'word: index'
 
-# Step 3: Optionally read back and print the first few lines of the output file to verify
-print("Verifying output file content:")
-with open(output_file_path, 'r') as file:
-    for _ in range(5):
+with open(output_file_path, 'r', encoding='utf-8') as file:
+    for i in range(10):
         print(file.readline().strip())
+        
+# Print the index of 'all', the index of 'resolution', and the total number of words
+
+print(word_index_dict['all'])
+print(word_index_dict['resolution'])
+print(len(word_index_dict))
