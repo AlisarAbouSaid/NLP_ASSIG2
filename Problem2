@@ -1,0 +1,39 @@
+import numpy as np
+
+
+# Load the vocabulary into the word_index_dict
+vocab = open("brown_vocab_100.txt", "r", encoding='utf-8')
+word_index_dict = {}
+for i, line in enumerate(vocab):
+    word = line.strip() # Remove any trailing newline characters
+    word_index_dict[word] = i
+vocab.close()
+
+# Open the corpus file
+f = open("brown_100.txt", "r", encoding='utf-8')
+
+# Initialize counts to a zero vector with the same length as the vocabulary
+counts = np.zeros(len(word_index_dict), dtype=int)
+
+# Iterate through each line of the corpus file and update counts
+for sentence in f:
+    words = sentence.lower().split() # Convert to lowercase and split into words
+    for word in words:
+        if word in word_index_dict: # Check if the word is in our dictionary
+            index = word_index_dict[word]
+            counts[index] += 1 # Increment the count for this word
+
+f.close()
+
+# Normalize counts to create a probability distribution
+probs = counts / np.sum(counts)
+
+# Write the normalized probabilities to a file
+output_filepath = 'unigram_probs.txt'
+with open(output_filepath, "w", encoding='utf-8') as out_file:
+    for probability in probs:
+        out_file.write(f"{probability}\n")
+
+# Now you can check if the first and last probabilities are as expected
+print(f"The probability of the first word 'all': {probs[word_index_dict['all']]}")
+print(f"The probability of the last word 'resolution': {probs[word_index_dict['resolution']]}")
