@@ -1,0 +1,64 @@
+import numpy as np
+from sklearn.preprocessing import normalize
+
+# Load the dictionary mapping words to indices
+word_to_index = {}
+with open("brown_vocab_100.txt", "r", encoding='utf-8') as vocab:
+    for i, word in enumerate(vocab):
+        word_to_index[word.strip().lower()] = i
+
+# Initialize a 3D numpy array for trigram counts
+# Since this is just a demonstration, we initialize with a small size
+# In a real scenario, this should be the size of the vocabulary squared
+vocab_size = len(word_to_index)
+trigram_counts = np.zeros((vocab_size, vocab_size, vocab_size), dtype=int)
+
+# Load sentences and tokenize
+with open("brown_100.txt", "r", encoding='utf-8') as sents:
+    for sentence in sents:
+        words = ['<s>'] + sentence.lower().split() + ['</s>']
+        for i in range(len(words) - 2):
+            if words[i] in word_to_index and words[i+1] in word_to_index and words[i+2] in word_to_index:
+                w1_index = word_to_index[words[i]]
+                w2_index = word_to_index[words[i+1]]
+                w3_index = word_to_index[words[i+2]]
+                trigram_counts[w1_index, w2_index, w3_index] += 1
+
+# Apply alpha smoothing to the trigram counts
+alpha = 0.1
+trigram_counts_smoothed = trigram_counts + alpha
+
+# Normalize to get probabilities
+# For the unsmoothed model
+trigram_probs_unsmoothed = trigram_counts / np.sum(trigram_counts, axis=2, keepdims=True)
+# For the smoothed model
+trigram_probs_smoothed = trigram_counts_smoothed / np.sum(trigram_counts_smoothed, axis=2, keepdims=True)
+
+# Function to get trigram probability
+def get_trigram_prob(w1, w2, w3, smoothed=False):
+    w1_index = word_to_index[w1]
+    w2_index = word_to_index[w2]
+    w3_index = word_to_index[w3]
+    if smoothed:
+        return trigram_probs_smoothed[w1_index, w2_index, w3_index]
+    else:
+        return trigram_probs_unsmoothed[w1_index, w2_index, w3_index]
+
+# Examples
+print("Unsmoothed p(past | in, the):", get_trigram_prob('in', 'the', 'past'))
+print("Smoothed p(past | in, the):", get_trigram_prob('in', 'the', 'past', smoothed=True))
+
+print("Unsmoothed p(time | in, the):", get_trigram_prob('in', 'the', 'time'))
+print("Smoothed p(time | in, the):", get_trigram_prob('in', 'the', 'time', smoothed=True))
+
+print("Unsmoothed p(said | the, jury):", get_trigram_prob('the', 'jury', 'said'))
+print("Smoothed p(said | the, jury):", get_trigram_prob('the', 'jury', 'said', smoothed=True))
+
+print("Unsmoothed p(recommended | the, jury):", get_trigram_prob('the', 'jury', 'recommended'))
+print("Smoothed p(recommended | the, jury):", get_trigram_prob('the', 'jury', 'recommended', smoothed=True))
+
+print("Unsmoothed p(that | jury, said):", get_trigram_prob('jury', 'said', 'that'))
+print("Smoothed p(that | jury, said):", get_trigram_prob('jury', 'said', 'that', smoothed=True))
+
+print("Unsmoothed p(, | agriculture, teacher):", get_trigram_prob('agriculture', 'teacher', ','))
+print("Smoothed p(, | agriculture, teacher):", get_trigram_prob('agriculture', 'teacher', ',', smoothed=True))
