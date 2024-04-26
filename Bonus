@@ -1,0 +1,46 @@
+import math
+import nltk
+from nltk.probability import FreqDist
+from nltk import bigrams
+from nltk.corpus import brown
+
+# Ensure the Brown corpus is downloaded
+nltk.download('brown')
+
+# Calculate frequency distribution for individual words
+word_freqs = FreqDist(brown.words())
+
+# Calculate frequency distribution for bigrams (successive word pairs)
+bigram_freqs = FreqDist(bigrams(brown.words()))
+
+# Size of the corpus
+N = len(brown.words())
+
+# Function to calculate PMI
+def pmi(w1, w2, word_freqs, bigram_freqs, N):
+    prob_w1 = word_freqs[w1] / N
+    prob_w2 = word_freqs[w2] / N
+    prob_w1w2 = bigram_freqs[(w1, w2)] / N
+    return math.log2(prob_w1w2 / (prob_w1 * prob_w2))
+
+# Calculate PMI for all bigrams and store in a dictionary
+pmi_values = {}
+for (w1, w2), freq in bigram_freqs.items():
+    if freq >= 10:  # Ignore word pairs that occur less than 10 times
+        pmi_values[(w1, w2)] = pmi(w1, w2, word_freqs, bigram_freqs, N)
+
+# Sort the PMI values
+sorted_pmi = sorted(pmi_values.items(), key=lambda item: item[1])
+
+# Get the 20 word pairs with the lowest and highest PMI values
+lowest_pmi = sorted_pmi[:20]
+highest_pmi = sorted_pmi[-20:]
+
+# Print the results
+print("20 word pairs with the lowest PMI values:")
+for pair, value in lowest_pmi:
+    print(f"{pair}: {value}")
+
+print("\n20 word pairs with the highest PMI values:")
+for pair, value in highest_pmi:
+    print(f"{pair}: {value}")
