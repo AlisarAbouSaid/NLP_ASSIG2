@@ -24,12 +24,12 @@ sents = codecs.open("brown_100.txt")
 
 # Create word_to_index
 for sentence in sents:
-    words = sentence.lower().split(" ")[1:-2]
+    words = sentence.lower().split(" ")[:-1]
     prevWord = words[0]
     for word in words[1:]:
         if prevWord in word_to_index.keys() and word in word_to_index.keys():
             wordIdx = word_to_index[word]          # Word along first axis
-            condIdx = word_to_index[prevWord]     # Given along second axis
+            condIdx = word_to_index[prevWord]      # Given along second axis
             condCounts[wordIdx, condIdx] = condCounts[wordIdx, condIdx] + 1
         
         prevWord = word
@@ -52,4 +52,3 @@ with open("bigram_probs.txt", 'w') as file:
     file.write(str(bigram[word_to_index["campaign"], word_to_index["the"]]))
     file.write("\n")
     file.write(str(bigram[word_to_index["calls"], word_to_index["anonymous"]]))
-    
