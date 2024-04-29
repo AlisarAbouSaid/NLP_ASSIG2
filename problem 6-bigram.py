@@ -24,7 +24,7 @@ sents = codecs.open("brown_100.txt")
 
 # Create word_to_index
 for sentence in sents:
-    words = sentence.lower().split(" ")
+    words = sentence.lower().split(" ")[:-1]
     prevWord = words[0]
     for word in words[1:]:
         if prevWord in word_to_index.keys() and word in word_to_index.keys():
@@ -33,9 +33,7 @@ for sentence in sents:
             condCounts[wordIdx, condIdx] = condCounts[wordIdx, condIdx] + 1
 
         prevWord = word
-# alpha-smoothing
-#alpha = 0.1
-#condCounts += alpha
+
 # Normalize for conditionals
 bigram = normalize(condCounts, norm='l1', axis=0)
 
@@ -58,13 +56,14 @@ with open("bigram_probs.txt", 'w') as file:
 # Initialize joint probability of the sentence
 # sentprob = 1
 # Open the output file for writing bigram perplexities
-bigram_output_file_path = "bigram_eval.txt"
+
+bigram_output_file_path ="bigram_eval.txt"
 with open(bigram_output_file_path, 'w') as bigram_output_file:
     # Iterate through each sentence in the toy corpus
     with open("toy_corpus.txt", 'r') as corpus_file:
         for sentence in corpus_file:
             # Split the sentence into words and convert to lowercase
-            words = sentence.lower().split(" ")
+            words = sentence.lower().split(" ")[:-1]
             # Initialize the joint probability of the sentence
             sentprob = 1
             num_bigrams = 0
@@ -76,8 +75,8 @@ with open(bigram_output_file_path, 'w') as bigram_output_file:
                     sentprob *= bigram_prob
                     num_bigrams += 1
                 prevWord = word
-            print('num_bigrams',num_bigrams)
+            print('num_bigrams', num_bigrams)
             # Calculate perplexity
-            perplexity = 1 / pow(sentprob, 1/ num_bigrams)
+            perplexity = 1 / pow(sentprob, 1 / num_bigrams)
             # Write the perplexity of the sentence to the output file
             bigram_output_file.write(str(perplexity) + '\n')
