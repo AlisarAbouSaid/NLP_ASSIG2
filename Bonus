@@ -25,8 +25,9 @@ def pmi(w1, w2, word_freqs, bigram_freqs, N):
 
 # Calculate PMI for all bigrams and store in a dictionary
 pmi_values = {}
-for (w1, w2), freq in bigram_freqs.items():
-    if freq >= 10:  # Ignore word pairs that occur less than 10 times
+for (w1, w2) in bigrams(brown.words()):
+    # Check if both words occur at least 10 times individually
+    if word_freqs[w1] >= 10 and word_freqs[w2] >= 10:
         pmi_values[(w1, w2)] = pmi(w1, w2, word_freqs, bigram_freqs, N)
 
 # Sort the PMI values
