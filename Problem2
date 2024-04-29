@@ -75,5 +75,5 @@ def GENERATE(word_index_dict, probs, model_type, max_words, start_word):
 # Write sentences to file
 with open("unigram_generation.txt", 'w') as file:
     for i in range(10):
-        file.write(GENERATE(word_to_index, probs, "unigram", 20, "the"))
+        file.write(GENERATE(word_index_dict, probs, "unigram", 20, "the"))
         file.write("\n")
