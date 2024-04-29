@@ -45,6 +45,8 @@ for sentence in sents:
         prevWord1 = prevWord2
         prevWord2 = word
 
+sents.close()
+
 # Calculate probabilities
 probs = {
     "past | in, the": counts["past"] / prevCounts[("in", "the")],
