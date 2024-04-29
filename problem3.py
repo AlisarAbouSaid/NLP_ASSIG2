@@ -16,6 +16,8 @@ for word in vocab:
     
     prevWord = word
 
+vocab.close()
+
 # Create bigram model
 condCounts = np.zeros((len(word_to_index),len(word_to_index)))
 
@@ -33,6 +35,8 @@ for sentence in sents:
             condCounts[wordIdx, condIdx] = condCounts[wordIdx, condIdx] + 1
         
         prevWord = word
+
+sents.close()
 
 # Normalize for conditionals
 bigram = normalize(condCounts, norm = 'l1', axis = 0)
